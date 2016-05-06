@@ -81,6 +81,10 @@ public class RemoveTimeAndTag {
           for(File file : files){
 
              String file_name = file.getName();
+             // 名前からID部分の取り出し
+             int idx_hascID = file_name.indexOf(".");
+             String file_id = file_name.substring(0,idx_hascID);
+
              System.out.println(file_name);
 
              dispFileLineSize(file);
@@ -92,7 +96,7 @@ public class RemoveTimeAndTag {
              }
 
              // 出力ディレクトリに軸補正用のファイルを作成
-             File output_file = new File(output_sub_dir.getPath()+"/"+file_name);
+             File output_file = new File(output_sub_dir.getPath()+"/"+file_id+".csv");
              if(output_file.exists() == false){
                 try{
                    output_file.createNewFile();
