@@ -61,66 +61,86 @@ public class RemoveTimeAndTag {
       File data_dir = new File(data_path);
 
       // data内のファイルを取得
-      File[] files = data_dir.listFiles(normalFileFilter);
+      File[] sub_dirs = data_dir.listFiles(normalFileFilter);
+      System.out.println("sub dir count = " + sub_dirs.length);
 
-      System.out.println("file count = " + files.length);
-
-      // 各ファイルにアクセス
-      for(File file : files){
-
-         String file_name = file.getName();
-         System.out.println(file_name);
-
-         dispFileLineSize(file);
-
-         // 出力ディレクトリに軸補正用のファイルを作成
-         File output_file = new File(output_dir.getPath()+"/"+file_name);
-         if(output_file.exists() == false){
-            try{
-               output_file.createNewFile();
-            }catch(IOException e){
-               e.printStackTrace();
-            }
-         }
-
-         // ファイル内容にアクセスしファイルに追加
-         try {
-            //ファイルを読み込む
-            FileReader fr = new FileReader(file);
-            BufferedReader br = new BufferedReader(fr);
-            //出力先を作成
-            FileWriter fw = new FileWriter(output_file, true);  //追記モードでファイル展開
-            PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
+      // 各ディレクトリにアクセス
+      for (File sub_dir : sub_dirs){
+        if(sub_dir.isHidden() == false){
+          System.out.println("===================================================");
+          System.out.println(sub_dir);
+          System.out.println("===================================================");
 
 
-            //読み込んだファイルを１行ずつ処理する
-            String line_str;
-            StringTokenizer token;
-            for(int i=0; (line_str = br.readLine()) != null; i++){
-               //区切り文字TABで分割する
-               token = new StringTokenizer(line_str, "\t");
+          // data内のファイルを取得
+          File[] files = sub_dir.listFiles(normalFileFilter);
 
-               // System.out.println(file.getName());
-               //分割した文字を配列に代入
-               for(int j=0; token.hasMoreTokens(); j++){
-                  String element = token.nextToken();
-                  if(j==2){
-                     // 内容を書き込む
-                     System.out.println(element);
-                     pw.println(element);
-                  }
-               }
-            }
+          System.out.println("file count = " + files.length);
 
-            //ファイル読み込みの終了処理
-            br.close();
-            //ファイル書き込みの終了処理
-            pw.close();
+          // 各ファイルにアクセス
+          for(File file : files){
 
-         } catch (IOException ex) {
-            //例外発生時処理
-            ex.printStackTrace();
-         }
+             String file_name = file.getName();
+             System.out.println(file_name);
+
+             dispFileLineSize(file);
+
+             // 出力ディレクトリにsub-ディレクトリを作成
+             File output_sub_dir = new File(output_dir.getPath()+"/"+sub_dir.getName()+"/");
+             if(output_sub_dir.exists() == false){
+               output_sub_dir.mkdir();
+             }
+
+             // 出力ディレクトリに軸補正用のファイルを作成
+             File output_file = new File(output_sub_dir.getPath()+"/"+file_name);
+             if(output_file.exists() == false){
+                try{
+                   output_file.createNewFile();
+                }catch(IOException e){
+                   e.printStackTrace();
+                }
+             }
+
+             // ファイル内容にアクセスしファイルに追加
+             try {
+                //ファイルを読み込む
+                FileReader fr = new FileReader(file);
+                BufferedReader br = new BufferedReader(fr);
+                //出力先を作成
+                FileWriter fw = new FileWriter(output_file, true);  //追記モードでファイル展開
+                PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
+
+
+                //読み込んだファイルを１行ずつ処理する
+                String line_str;
+                StringTokenizer token;
+                for(int i=0; (line_str = br.readLine()) != null; i++){
+                   //区切り文字TABで分割する
+                   token = new StringTokenizer(line_str, "\t");
+
+                   // System.out.println(file.getName());
+                   //分割した文字を配列に代入
+                   for(int j=0; token.hasMoreTokens(); j++){
+                      String element = token.nextToken();
+                      if(j==2){
+                         // 内容を書き込む
+                         System.out.println(element);
+                         pw.println(element);
+                      }
+                   }
+                }
+
+                //ファイル読み込みの終了処理
+                br.close();
+                //ファイル書き込みの終了処理
+                pw.close();
+
+             } catch (IOException ex) {
+                //例外発生時処理
+                ex.printStackTrace();
+             }
+          }
+        }
       }
    }
 
